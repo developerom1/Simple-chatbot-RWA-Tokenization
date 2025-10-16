@@ -1,25 +1,29 @@
-# RWA Tokenization AI Chatbot
+# RWA Tokenization Chatbot
 
-An AI-powered chatbot with an attractive UI designed to assist users with questions about Real World Asset (RWA) Tokenization. The chatbot operates strictly within this domain and refuses off-topic queries.
+A simple chatbot with an attractive UI designed to assist users with questions about Real World Asset (RWA) Tokenization. The chatbot operates strictly within this domain and refuses off-topic queries.
 
 ## Approach to Context Control
 
-The chatbot uses a system prompt in the AI model to limit responses to RWA Tokenization topics. Additionally, client-side keyword filtering ensures only relevant queries are sent to the backend. If the AI response lacks RWA keywords, a refusal is returned.
+The chatbot maintains strict context by:
+- Defining a set of allowed keywords related to RWA Tokenization (e.g., 'rwa', 'tokenization', 'blockchain').
+- Checking user input for the presence of at least one keyword before processing.
+- If no keywords are found, responding with a polite refusal message.
+- Responses are limited to a predefined knowledge base of Q&A pairs, ensuring no drift outside the domain.
 
 ## Technical Overview
 
 - **Frontend**: Static web application using HTML, CSS, and JavaScript.
-- **Backend**: Python Flask API with OpenAI GPT-3.5-turbo for AI responses.
+- **Backend**: Python Flask API with static knowledge base for responses.
 - **UI**: Responsive chat interface with modern styling (gradients, chat bubbles).
-- **Logic**: Frontend validates input, sends to backend API; backend uses AI with system prompt for context control.
-- **AI Model**: GPT-3.5-turbo with custom system prompt to enforce domain limits.
+- **Logic**: Frontend validates input, sends to backend API; backend uses keyword matching and static responses.
+- **No AI/Model**: Responses are predefined; no dynamic generation.
 
 ## Limitations
 
-- **Scope**: Only answers questions related to RWA Tokenization; off-topic queries are refused.
-- **Responses**: AI-generated, but constrained; no conversational memory.
-- **Technology**: Requires OpenAI API key; backend needs hosting.
-- **Accuracy**: Depends on AI model; may not be 100% accurate or up-to-date.
+- **Scope**: Only answers predefined questions related to RWA Tokenization. Cannot handle complex queries, generate new content, or discuss unrelated topics.
+- **Responses**: Limited to the knowledge base; no conversational memory or follow-up.
+- **Technology**: Frontend-only for static, but backend for API; no persistence or advanced features.
+- **Accuracy**: Based on static information; may not reflect the latest developments in RWA.
 
 ## Usage Documentation
 
@@ -28,25 +32,26 @@ The chatbot uses a system prompt in the AI model to limit responses to RWA Token
 2. Open `index.html` in a web browser (or deploy frontend).
 3. Type your question about RWA Tokenization.
 4. Click "Send" or press Enter.
-5. The AI will respond if relevant; otherwise, refuse.
+5. The chatbot will respond if relevant; otherwise, refuse.
 
 ### What to Expect
-- Relevant questions get AI-generated answers.
-- Off-topic queries get refusals.
-- Chat-like experience with typing delay.
+- Relevant questions (e.g., "What is RWA tokenization?") will receive informative answers.
+- Off-topic queries (e.g., "What's the weather?") will be met with a refusal message.
+- The interface is user-friendly, with a chat-like experience.
 
 ## Setup and Deployment
 
 ### Backend Setup
 1. Install dependencies: `pip install -r requirements.txt`
-2. Set OpenAI API key in `.env`: `OPENAI_API_KEY=your_key`
-3. Run locally: `python app.py` (runs on http://localhost:5000)
+2. Run locally: `python app.py` (runs on http://localhost:5000)
 
 ### Frontend Deployment
 Deploy static files (`index.html`, `style.css`, `script.js`) to GitHub Pages as before. Update `script.js` fetch URL to deployed backend.
 
 ### Backend Deployment (Free)
-Use Railway or Heroku:
-- **Railway**: Connect GitHub repo, set environment variables, deploy.
-- **Heroku**: Create app, push code, set config vars.
-Update frontend fetch URL to deployed backend URL.
+Use Render:
+- Create a Render account.
+- Connect your GitHub repo.
+- Create a new Web Service, select Python, set build command `pip install -r requirements.txt`, start command `python app.py`.
+- Deploy.
+Update frontend fetch URL to deployed backend URL (e.g., https://your-app.onrender.com/chat).
