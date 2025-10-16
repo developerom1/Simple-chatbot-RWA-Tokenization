@@ -16,15 +16,20 @@ function isRelevant(input) {
     return keywords.some(keyword => lowerInput.includes(keyword));
 }
 
-function getResponse(input) {
-    const lowerInput = input.toLowerCase();
-    for (const question in knowledgeBase) {
-        if (lowerInput.includes(question)) {
-            return knowledgeBase[question];
-        }
+async function getResponse(input) {
+    try {
+        const response = await fetch('http://localhost:5000/chat', {  // Change to deployed URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: input }),
+        });
+        const data = await response.json();
+        return data.response;
+    } catch (error) {
+        return 'Sorry, unable to connect to the server. Please try again later.';
     }
-    // Fuzzy match or default
-    return "I'm sorry, I can only assist with questions related to RWA Tokenization. Please ask something about real-world asset tokenization!";
 }
 
 function addMessage(message, isUser = false) {
@@ -37,13 +42,13 @@ function addMessage(message, isUser = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-document.getElementById('send-button').addEventListener('click', function() {
+document.getElementById('send-button').addEventListener('click', async function() {
     const userInput = document.getElementById('user-input').value.trim();
     if (userInput) {
         addMessage(userInput, true);
         document.getElementById('user-input').value = '';
         if (isRelevant(userInput)) {
-            const response = getResponse(userInput);
+            const response = await getResponse(userInput);
             setTimeout(() => addMessage(response), 500); // Simulate typing delay
         } else {
             setTimeout(() => addMessage("I'm sorry, I can only assist with questions related to RWA Tokenization. Please ask something about real-world asset tokenization!"), 500);
