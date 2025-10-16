@@ -2,6 +2,8 @@
 
 A simple chatbot with an attractive UI designed to assist users with questions about Real World Asset (RWA) Tokenization. The chatbot operates strictly within this domain and refuses off-topic queries.
 
+**Live Demo**: [https://developerom1.github.io/Simple-chatbot-RWA-Tokenization/](https://developerom1.github.io/Simple-chatbot-RWA-Tokenization/)
+
 ## Approach to Context Control
 
 The chatbot maintains strict context by:
@@ -33,25 +35,3 @@ The chatbot maintains strict context by:
 3. Type your question about RWA Tokenization.
 4. Click "Send" or press Enter.
 5. The chatbot will respond if relevant; otherwise, refuse.
-
-### What to Expect
-- Relevant questions (e.g., "What is RWA tokenization?") will receive informative answers.
-- Off-topic queries (e.g., "What's the weather?") will be met with a refusal message.
-- The interface is user-friendly, with a chat-like experience.
-
-## Setup and Deployment
-
-### Backend Setup
-1. Install dependencies: `pip install -r requirements.txt`
-2. Run locally: `python app.py` (runs on http://localhost:5000)
-
-### Frontend Deployment
-Deploy static files (`index.html`, `style.css`, `script.js`) to GitHub Pages as before. Update `script.js` fetch URL to deployed backend.
-
-### Backend Deployment (Free)
-Use Render:
-- Create a Render account.
-- Connect your GitHub repo.
-- Create a new Web Service, select Python, set build command `pip install -r requirements.txt`, start command `python app.py`.
-- Deploy.
-Update frontend fetch URL to deployed backend URL (e.g., https://your-app.onrender.com/chat).
