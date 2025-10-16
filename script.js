@@ -18,7 +18,7 @@ function isRelevant(input) {
 
 async function getResponse(input) {
     try {
-        const response = await fetch('http://localhost:5000/chat', {  // Change to deployed URL
+        const response = await fetch('https://simple-chatbot-rwa-tokenization.onrender.com/chat', {  // Change to deployed URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
