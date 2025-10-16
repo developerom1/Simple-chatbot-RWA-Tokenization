@@ -1,26 +1,33 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from openai import OpenAI
 import os
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests from frontend
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+knowledgeBase = {
+    "what is rwa tokenization": "RWA Tokenization is the process of converting real-world assets, such as real estate, art, or commodities, into digital tokens on a blockchain. This allows for fractional ownership, increased liquidity, and easier transfer of assets.",
+    "how does rwa tokenization work": "Assets are digitized into tokens representing ownership shares. These tokens are issued on a blockchain, enabling secure, transparent trading and management of the underlying asset.",
+    "benefits of rwa tokenization": "Benefits include fractional ownership (allowing more people to invest), improved liquidity (easier buying/selling), reduced intermediaries, and global accessibility.",
+    "examples of rwa": "Examples include tokenizing real estate properties, fine art, commodities like gold, or even revenue streams from businesses.",
+    "risks of rwa tokenization": "Risks involve regulatory uncertainty, market volatility, smart contract vulnerabilities, and potential lack of legal recognition for tokenized assets.",
+    "why tokenize assets": "Tokenization enhances accessibility, reduces costs, increases transparency, and enables new financial products like DeFi integrations.",
+    "blockchain in rwa": "Blockchain provides the secure, decentralized ledger for recording ownership and transactions of tokenized assets.",
+    "fractional ownership": "Fractional ownership means dividing an asset into smaller, tradable shares via tokens, making high-value assets affordable to more investors."
+}
 
-SYSTEM_PROMPT = """
-You are an AI assistant specialized in Real World Asset (RWA) Tokenization. You must only answer questions related to RWA tokenization, blockchain, fractional ownership, asset tokenization, and related topics. If a question is not related to this domain, politely refuse to answer and redirect to RWA topics.
+keywords = ['rwa', 'tokenization', 'real world asset', 'blockchain', 'fractional', 'ownership', 'liquidity', 'asset', 'token']
 
-Key topics you can discuss:
-- What is RWA tokenization?
-- How does it work?
-- Benefits and risks.
-- Examples of RWAs.
-- Blockchain in RWAs.
-- Fractional ownership.
+def isRelevant(input_str):
+    lower_input = input_str.lower()
+    return any(keyword in lower_input for keyword in keywords)
 
-Do not discuss or provide information on any other topics.
-"""
+def getResponse(input_str):
+    lower_input = input_str.lower()
+    for question in knowledgeBase:
+        if question in lower_input:
+            return knowledgeBase[question]
+    return "I'm sorry, I can only assist with questions related to RWA Tokenization. Please ask something about real-world asset tokenization!"
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -30,30 +37,12 @@ def chat():
     if not user_message:
         return jsonify({'response': 'Please provide a message.'})
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_message}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-        ai_response = response.choices[0].message.content
-        if ai_response:
-            ai_response = ai_response.strip()
-        else:
-            ai_response = "Sorry, I couldn't generate a response."
+    if isRelevant(user_message):
+        response = getResponse(user_message)
+    else:
+        response = "I'm sorry, I can only assist with questions related to RWA Tokenization. Please ask something about real-world asset tokenization!"
 
-        # Additional check: if response doesn't contain RWA keywords, refuse
-        rwa_keywords = ['rwa', 'tokenization', 'blockchain', 'asset', 'fractional', 'ownership']
-        if not any(keyword in ai_response.lower() for keyword in rwa_keywords):
-            ai_response = "I'm sorry, I can only assist with questions related to RWA Tokenization. Please ask something about real-world asset tokenization!"
-
-        return jsonify({'response': ai_response})
-    except Exception as e:
-        return jsonify({'response': 'Sorry, an error occurred. Please try again.'})
+    return jsonify({'response': response})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
