@@ -40,7 +40,11 @@ def chat():
             max_tokens=150,
             temperature=0.7
         )
-        ai_response = response.choices[0].message.content.strip()
+        ai_response = response.choices[0].message.content
+        if ai_response:
+            ai_response = ai_response.strip()
+        else:
+            ai_response = "Sorry, I couldn't generate a response."
 
         # Additional check: if response doesn't contain RWA keywords, refuse
         rwa_keywords = ['rwa', 'tokenization', 'blockchain', 'asset', 'fractional', 'ownership']
@@ -52,4 +56,5 @@ def chat():
         return jsonify({'response': 'Sorry, an error occurred. Please try again.'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
